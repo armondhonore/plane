@@ -1,0 +1,45 @@
+application:
+  name: plane
+  pods:
+    - name: frontend
+      image: makeplane/plane-frontend:latest
+      path: /
+      servicePorts:
+        - 3000
+      vars:
+        NEXT_PUBLIC_API_BASE_URL: "<%URL%>"
+    - name: api
+      image: makeplane/plane-backend:latest
+      path: /api
+      servicePorts:
+        - 8000
+      vars:
+        DATABASE_URL: postgres://plane:plane@postgres.pod:5432/plane
+        REDIS_URL: redis://redis.pod:6379
+        SECRET_KEY: "secret-key-changeme"
+        WEB_URL: "<%URL%>"
+        CORS_ALLOWED_ORIGINS: "<%URL%>"
+    - name: worker
+      image: makeplane/plane-backend:latest
+      servicePorts:
+        - 8001
+      vars:
+        DATABASE_URL: postgres://plane:plane@postgres.pod:5432/plane
+        REDIS_URL: redis://redis.pod:6379
+        SECRET_KEY: "secret-key-changeme"
+    - name: postgres
+      image: postgres:15.2-alpine
+      servicePorts:
+        - 5432
+      vars:
+        POSTGRES_DB: plane
+        POSTGRES_USER: plane
+        POSTGRES_PASSWORD: plane
+      volumes:
+        - name: db
+          mountPath: /var/lib/postgresql
+          size: 10Gi
+    - name: redis
+      image: redis:6.2-alpine
+      servicePorts:
+        - 6379
