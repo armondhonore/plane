@@ -7,8 +7,8 @@ application:
     servicePorts:
     - 3000
     vars:
-      NEXT_PUBLIC_API_BASE_URL: "<%URL%>"
-      NEXT_PUBLIC_WEB_BASE_URL: "<%URL%>"
+      NEXT_PUBLIC_API_BASE_URL: "https://relaxed-weasel-plane.cloud.nexlayer.ai"
+      NEXT_PUBLIC_WEB_BASE_URL: "https://relaxed-weasel-plane.cloud.nexlayer.ai"
   - name: api
     image: makeplane/plane-backend:latest
     path: /api
@@ -18,8 +18,8 @@ application:
       DATABASE_URL: postgres://plane:plane@postgres.pod:5432/plane
       REDIS_URL: redis://plane:plane@redis.pod:6379
       SECRET_KEY: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
-      WEB_URL: "<%URL%>"
-      CORS_ALLOWED_ORIGINS: "<%URL%>"
+      WEB_URL: "https://relaxed-weasel-plane.cloud.nexlayer.ai"
+      CORS_ALLOWED_ORIGINS: "https://relaxed-weasel-plane.cloud.nexlayer.ai"
       DEBUG: "0"
   - name: postgres
     image: postgres:15.2-alpine
