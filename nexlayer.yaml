@@ -2,7 +2,7 @@ application:
   name: plane
   pods:
     - name: web
-      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix6"
+      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix7"
       path: /
       servicePorts:
         - 80
