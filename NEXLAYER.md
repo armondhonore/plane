@@ -104,7 +104,7 @@ application:
   name: plane
   pods:
     - name: web
-      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix7"
+      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix9"
       path: /
       servicePorts:
         - 80
@@ -171,7 +171,7 @@ application:
 
 ## Nexlayer Configuration
 <!-- nexlayer:section agent-managed=nexlayer_config -->
-**Last deployed:** 2026-06-26T19:37:56Z  
+**Last deployed:** 2026-06-26T19:48:43Z  
 **Live URL:** https://relaxed-weasel-plane.cloud.nexlayer.ai  
 **Runtime:**  · **Port:** auto-detected  
 **Deploy branch:** nexlayer  
@@ -181,7 +181,7 @@ application:
   name: plane
   pods:
     - name: web
-      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix7"
+      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix9"
       path: /
       servicePorts:
         - 80
@@ -222,7 +222,8 @@ application:
 | Date | Status | Notes |
 |------|--------|-------|
 | 2026-06-26T18:50:15Z | analyzed | initial repo analysis |
-| 2026-06-26T19:37:56Z | success | deployed https://relaxed-weasel-plane.cloud.nexlayer.ai |
+| 2026-06-26T19:48:43Z | success | deployed https://relaxed-weasel-plane.cloud.nexlayer.ai |
 <!-- nexlayer:end -->
+
 
 
