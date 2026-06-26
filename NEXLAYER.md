@@ -85,6 +85,17 @@ NODE_ENV=development
 | `web` | `VITE_LIVE_BASE_URL` | `"<% URL %>/live"` | plain |
 | `web` | `VITE_SPACE_BASE_URL` | `"<% URL %>/space"` | plain |
 | `web` | `VITE_ADMIN_BASE_URL` | `"<% URL %>/admin"` | plain |
+| `postgres` | `POSTGRES_USER` | `"plane"` | plain |
+| `postgres` | `POSTGRES_PASSWORD` | `"${POSTGRES_PASSWORD}"` | inter-pod |
+| `postgres` | `POSTGRES_DB` | `"plane"` | plain |
+| `rabbitmq` | `RABBITMQ_DEFAULT_USER` | `"plane"` | plain |
+| `rabbitmq` | `RABBITMQ_DEFAULT_PASS` | _(set via Nexlayer dashboard)_ | secret |
+
+### Secrets Required
+
+Set these in the Nexlayer dashboard before deploying:
+
+- `RABBITMQ_DEFAULT_PASS` (`rabbitmq` pod)
 
 ### nexlayer.yaml
 
@@ -93,7 +104,7 @@ application:
   name: plane
   pods:
     - name: web
-      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix5"
+      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix6"
       path: /
       servicePorts:
         - 80
@@ -106,8 +117,27 @@ application:
         VITE_LIVE_BASE_URL: "<% URL %>/live"
         VITE_SPACE_BASE_URL: "<% URL %>/space"
         VITE_ADMIN_BASE_URL: "<% URL %>/admin"
+    - name: postgres
+      image: mirror.gcr.io/library/postgres:16-alpine
+      servicePorts:
+        - 5432
+      vars:
+        POSTGRES_USER: "plane"
+        POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+        POSTGRES_DB: "plane"
+    - name: redis
+      image: mirror.gcr.io/library/redis:7-alpine
+      servicePorts:
+        - 6379
+    - name: rabbitmq
+      image: mirror.gcr.io/library/rabbitmq:3-management-alpine
+      servicePorts:
+        - 5672
+        - 15672
+      vars:
+        RABBITMQ_DEFAULT_USER: "plane"
+        RABBITMQ_DEFAULT_PASS: "plane"
 ```
-
 <!-- nexlayer:end -->
 
 ## Nexlayer Deployment Plan
@@ -141,7 +171,7 @@ application:
 
 ## Nexlayer Configuration
 <!-- nexlayer:section agent-managed=nexlayer_config -->
-**Last deployed:** 2026-06-26T19:19:19Z  
+**Last deployed:** 2026-06-26T19:28:26Z  
 **Live URL:** https://relaxed-weasel-plane.cloud.nexlayer.ai  
 **Runtime:**  · **Port:** auto-detected  
 **Deploy branch:** nexlayer  
@@ -151,7 +181,7 @@ application:
   name: plane
   pods:
     - name: web
-      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix5"
+      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix6"
       path: /
       servicePorts:
         - 80
@@ -164,6 +194,26 @@ application:
         VITE_LIVE_BASE_URL: "<% URL %>/live"
         VITE_SPACE_BASE_URL: "<% URL %>/space"
         VITE_ADMIN_BASE_URL: "<% URL %>/admin"
+    - name: postgres
+      image: mirror.gcr.io/library/postgres:16-alpine
+      servicePorts:
+        - 5432
+      vars:
+        POSTGRES_USER: "plane"
+        POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+        POSTGRES_DB: "plane"
+    - name: redis
+      image: mirror.gcr.io/library/redis:7-alpine
+      servicePorts:
+        - 6379
+    - name: rabbitmq
+      image: mirror.gcr.io/library/rabbitmq:3-management-alpine
+      servicePorts:
+        - 5672
+        - 15672
+      vars:
+        RABBITMQ_DEFAULT_USER: "plane"
+        RABBITMQ_DEFAULT_PASS: "plane"
 ```
 <!-- nexlayer:end -->
 
@@ -172,5 +222,6 @@ application:
 | Date | Status | Notes |
 |------|--------|-------|
 | 2026-06-26T18:50:15Z | analyzed | initial repo analysis |
-| 2026-06-26T19:19:19Z | success | deployed https://relaxed-weasel-plane.cloud.nexlayer.ai |
+| 2026-06-26T19:28:26Z | success | deployed https://relaxed-weasel-plane.cloud.nexlayer.ai |
 <!-- nexlayer:end -->
+

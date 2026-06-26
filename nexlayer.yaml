@@ -2,7 +2,7 @@ application:
   name: plane
   pods:
     - name: web
-      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix5"
+      image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix6"
       path: /
       servicePorts:
         - 80
@@ -15,3 +15,23 @@ application:
         VITE_LIVE_BASE_URL: "<% URL %>/live"
         VITE_SPACE_BASE_URL: "<% URL %>/space"
         VITE_ADMIN_BASE_URL: "<% URL %>/admin"
+    - name: postgres
+      image: mirror.gcr.io/library/postgres:16-alpine
+      servicePorts:
+        - 5432
+      vars:
+        POSTGRES_USER: "plane"
+        POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+        POSTGRES_DB: "plane"
+    - name: redis
+      image: mirror.gcr.io/library/redis:7-alpine
+      servicePorts:
+        - 6379
+    - name: rabbitmq
+      image: mirror.gcr.io/library/rabbitmq:3-management-alpine
+      servicePorts:
+        - 5672
+        - 15672
+      vars:
+        RABBITMQ_DEFAULT_USER: "plane"
+        RABBITMQ_DEFAULT_PASS: "plane"
