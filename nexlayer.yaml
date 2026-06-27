@@ -1,6 +1,11 @@
 application:
   name: plane
   pods:
+    # -------------------------------------------------------------------------
+    # web — Vite/react-router SPA (this fork's frontend, served on :80).
+    # Built from apps/web/Dockerfile.web; the built image is reused verbatim on
+    # a deploy-only redeploy. path: / makes it the web root.
+    # -------------------------------------------------------------------------
     - name: web
       image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/plane:9f0543d-fix9"
       path: /
@@ -15,6 +20,41 @@ application:
         VITE_LIVE_BASE_URL: "<% URL %>/live"
         VITE_SPACE_BASE_URL: "<% URL %>/space"
         VITE_ADMIN_BASE_URL: "<% URL %>/admin"
+    # -------------------------------------------------------------------------
+    # api — Django/gunicorn. makeplane/plane-backend default CMD is the api
+    # server (./bin/docker-entrypoint-api.sh). It waits for the DB and a
+    # reachable Celery broker (RabbitMQ), then enqueues register_instance via
+    # the broker. WITHOUT the broker the api crash-loops with
+    # "kombu OperationalError [Errno 111] Connection refused".
+    #
+    # Inter-pod wiring uses the APP-PREFIXED k8s service names (plane-*-service),
+    # NOT *.pod — *.pod DNS collides in the shared relaxed-weasel namespace.
+    # Credentials are referenced as ${POSTGRES_PASSWORD} so the deployer keeps
+    # the DB pod and the app connection string in sync (no generated-password
+    # desync on redeploy).
+    # -------------------------------------------------------------------------
+    - name: api
+      image: makeplane/plane-backend:latest
+      path: /api
+      servicePorts:
+        - 8000
+      vars:
+        DATABASE_URL: "postgres://plane:${POSTGRES_PASSWORD}@plane-postgres-service:5432/plane"
+        REDIS_URL: "redis://plane-redis-service:6379"
+        AMQP_URL: "amqp://plane:plane@plane-rabbitmq-service:5672/"
+        RABBITMQ_HOST: "plane-rabbitmq-service"
+        RABBITMQ_PORT: "5672"
+        RABBITMQ_USER: "plane"
+        RABBITMQ_PASSWORD: "plane"
+        RABBITMQ_VHOST: "/"
+        SECRET_KEY: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+        WEB_URL: "<% URL %>"
+        CORS_ALLOWED_ORIGINS: "<% URL %>"
+        GUNICORN_WORKERS: "2"
+        DEBUG: "0"
+    # -------------------------------------------------------------------------
+    # PostgreSQL 16 — primary datastore.
+    # -------------------------------------------------------------------------
     - name: postgres
       image: mirror.gcr.io/library/postgres:16-alpine
       servicePorts:
@@ -23,10 +63,17 @@ application:
         POSTGRES_USER: "plane"
         POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
         POSTGRES_DB: "plane"
+    # -------------------------------------------------------------------------
+    # Redis 7 — cache + websocket fan-out (NOT the Celery broker).
+    # -------------------------------------------------------------------------
     - name: redis
       image: mirror.gcr.io/library/redis:7-alpine
       servicePorts:
         - 6379
+    # -------------------------------------------------------------------------
+    # RabbitMQ — Celery broker. user/pass plane/plane on the default "/" vhost.
+    # plane's api/worker/beat publish & consume Celery tasks through this.
+    # -------------------------------------------------------------------------
     - name: rabbitmq
       image: mirror.gcr.io/library/rabbitmq:3-management-alpine
       servicePorts:
